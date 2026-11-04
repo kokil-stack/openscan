@@ -6,3 +6,4 @@
 # Room
 -keep class androidx.room.RoomDatabase { *; }
 -dontwarn androidx.room.**
+

@@ -295,3 +295,4 @@ private fun shareDocument(context: Context, doc: ScanDocument) {
     }
     context.startActivity(Intent.createChooser(intent, "Share ${doc.title}"))
 }
+

@@ -27,3 +27,4 @@ interface ScanDocumentDao {
     @Query("DELETE FROM scanned_documents WHERE id = :id")
     suspend fun deleteById(id: Long)
 }
+

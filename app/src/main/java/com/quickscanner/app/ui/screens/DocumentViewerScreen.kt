@@ -320,3 +320,4 @@ private fun sharePdf(context: Context, doc: ScanDocument) {
     }
     context.startActivity(Intent.createChooser(intent, "Share PDF"))
 }
+

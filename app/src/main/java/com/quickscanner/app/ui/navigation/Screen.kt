@@ -10,3 +10,4 @@ sealed class Screen(val route: String) {
         fun createRoute(docId: Long) = "ocr/$docId"
     }
 }
+

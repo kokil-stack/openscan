@@ -19,3 +19,4 @@ class QuickScannerApp : Application() {
         ).fallbackToDestructiveMigration().build()
     }
 }
+

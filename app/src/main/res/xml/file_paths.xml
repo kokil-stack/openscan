@@ -4,3 +4,4 @@
     <cache-path name="shared_docs" path="." />
     <files-path name="internal_docs" path="." />
 </paths>
+

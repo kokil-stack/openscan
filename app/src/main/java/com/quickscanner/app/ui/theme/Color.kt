@@ -12,3 +12,4 @@ val ScannerTextPrimary = Color(0xFFF1F3F5)
 val ScannerTextSecondary = Color(0xFFADB5BD)
 val ScannerAccent = Color(0xFFFFC107)
 val ScannerDanger = Color(0xFFFA5252)
+

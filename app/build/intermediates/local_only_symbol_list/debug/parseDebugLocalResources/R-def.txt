@@ -1,0 +1,22 @@
+R_DEF: Internal format may change without notice
+local
+drawable ic_launcher
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+string export_pdf
+string extract_text
+string filter_auto
+string filter_bw
+string filter_grayscale
+string filter_original
+string filter_whiteboard
+string id_card_scan
+string import_gallery
+string no_documents_desc
+string no_documents_title
+string scan_now
+string search_placeholder
+string share
+style Theme.QuickScanner
+xml file_paths

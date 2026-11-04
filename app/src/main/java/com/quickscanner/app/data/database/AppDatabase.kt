@@ -9,3 +9,4 @@ import com.quickscanner.app.data.model.ScanDocument
 abstract class AppDatabase : RoomDatabase() {
     abstract fun scanDocumentDao(): ScanDocumentDao
 }
+

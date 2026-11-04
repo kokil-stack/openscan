@@ -33,3 +33,4 @@ jobs:
       with:
         name: QuickScanner-Debug-APK
         path: app/build/outputs/apk/debug/app-debug.apk
+
