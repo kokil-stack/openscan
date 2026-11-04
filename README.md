@@ -1,6 +1,15 @@
 # Quick Scanner 📄⚡
 
+[![Download APK](https://img.shields.io/badge/Download-APK%20v1.0.0-28a745?style=for-the-badge&logo=android&logoColor=white)](https://github.com/kokil-stack/openscan/releases/download/v1.0.0/QuickScanner-v1.0.0.apk)
+[![GitHub Release](https://img.shields.io/github/v/release/kokil-stack/openscan?style=for-the-badge)](https://github.com/kokil-stack/openscan/releases/tag/v1.0.0)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+
 > **Free, unlimited, open-source document scanner for Android. Zero subscriptions, zero CPU hogging, zero cloud lock-in.**
+
+### 📥 Direct Download
+👉 **[Click Here to Download QuickScanner-v1.0.0.apk](https://github.com/kokil-stack/openscan/releases/download/v1.0.0/QuickScanner-v1.0.0.apk)** *(63.5 MB, offline, pre-signed, install on any Android)*
+
+---
 
 Quick Scanner is an ultra-lightweight, high-performance alternative to proprietary document scanning apps (like Adobe Scan and CamScanner). Built with modern Android native architecture (**Kotlin + Jetpack Compose + Google ML Kit**), it delivers hardware-accelerated edge detection, perspective warping, and on-device OCR with zero latency and no quota limits.
 
