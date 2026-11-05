@@ -24,8 +24,24 @@ object PdfGenerator {
         val pdfDocument = PdfDocument()
 
         try {
+            outputFile.parentFile?.let { if (!it.exists()) it.mkdirs() }
+
             imagePaths.forEachIndexed { index, path ->
-                val bitmap = BitmapFactory.decodeFile(path) ?: return@forEachIndexed
+                val file = File(path)
+                if (!file.exists()) return@forEachIndexed
+
+                // Downsample ultra-high-res camera captures to prevent OutOfMemoryError
+                val boundsOptions = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                BitmapFactory.decodeFile(path, boundsOptions)
+
+                var inSample = 1
+                while (boundsOptions.outWidth / inSample > 2200 || boundsOptions.outHeight / inSample > 2200) {
+                    inSample *= 2
+                }
+
+                val decodeOptions = BitmapFactory.Options().apply { inSampleSize = inSample }
+                val bitmap = BitmapFactory.decodeFile(path, decodeOptions) ?: return@forEachIndexed
+
                 val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, index + 1).create()
                 val page = pdfDocument.startPage(pageInfo)
                 val canvas: Canvas = page.canvas
@@ -48,9 +64,6 @@ object PdfGenerator {
                 onProgress(index + 1, imagePaths.size)
             }
 
-            if (!outputFile.parentFile?.exists()!!) {
-                outputFile.parentFile?.mkdirs()
-            }
             FileOutputStream(outputFile).use { fos ->
                 pdfDocument.writeTo(fos)
             }
@@ -67,6 +80,8 @@ object PdfGenerator {
     ): File = withContext(Dispatchers.IO) {
         val pdfDocument = PdfDocument()
         try {
+            outputFile.parentFile?.let { if (!it.exists()) it.mkdirs() }
+
             bitmaps.forEachIndexed { index, bitmap ->
                 val pageInfo = PdfDocument.PageInfo.Builder(PAGE_WIDTH, PAGE_HEIGHT, index + 1).create()
                 val page = pdfDocument.startPage(pageInfo)
@@ -85,9 +100,6 @@ object PdfGenerator {
                 pdfDocument.finishPage(page)
             }
 
-            if (!outputFile.parentFile?.exists()!!) {
-                outputFile.parentFile?.mkdirs()
-            }
             FileOutputStream(outputFile).use { fos ->
                 pdfDocument.writeTo(fos)
             }

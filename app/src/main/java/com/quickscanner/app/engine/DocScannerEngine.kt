@@ -15,9 +15,9 @@ object DocScannerEngine {
     fun createScanner(activity: Activity): GmsDocumentScanner {
         val options = GmsDocumentScannerOptions.Builder()
             .setGalleryImportAllowed(true)
-            .setPageLimit(100) // Unlimited batches
-            .setResultFormats(RESULT_FORMAT_JPEG, RESULT_FORMAT_PDF)
-            .setScannerMode(SCANNER_MODE_FULL) // Auto-crop, perspective warp, edge detection
+            .setPageLimit(100)
+            .setResultFormats(RESULT_FORMAT_JPEG)
+            .setScannerMode(SCANNER_MODE_FULL)
             .build()
 
         return GmsDocumentScanning.getClient(options)

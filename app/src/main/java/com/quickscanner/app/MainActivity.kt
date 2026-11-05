@@ -71,43 +71,67 @@ class MainActivity : ComponentActivity() {
 
     private fun handleScanSuccess(scanningResult: GmsDocumentScanningResult) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val savedPagePaths = mutableListOf<String>()
+            try {
+                val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+                val savedPagePaths = mutableListOf<String>()
 
-            // Save scanned page JPEGs locally
-            val pages = scanningResult.pages
-            pages?.forEachIndexed { index, page ->
-                val sourceUri = page.imageUri
-                val targetFile = File(filesDir, "scan_${timestamp}_p${index + 1}.jpg")
-                copyUriToFile(sourceUri, targetFile)
-                savedPagePaths.add(targetFile.absolutePath)
-            }
+                // Save scanned page JPEGs locally
+                val pages = scanningResult.pages
+                if (pages.isNullOrEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivity, "No pages captured", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
 
-            // Save generated PDF if available
-            val pdfUri = scanningResult.pdf?.uri
-            val pdfPath = pdfUri?.let { uri ->
+                pages.forEachIndexed { index, page ->
+                    val sourceUri = page.imageUri
+                    val targetFile = File(filesDir, "scan_${timestamp}_p${index + 1}.jpg")
+                    copyUriToFile(sourceUri, targetFile)
+                    if (targetFile.exists() && targetFile.length() > 0) {
+                        savedPagePaths.add(targetFile.absolutePath)
+                    }
+                }
+
+                if (savedPagePaths.isEmpty()) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivity, "Could not save scan files", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                // Generate PDF natively
                 val targetPdf = File(filesDir, "scan_${timestamp}.pdf")
-                copyUriToFile(uri, targetPdf)
-                targetPdf.absolutePath
-            }
+                try {
+                    com.quickscanner.app.engine.PdfGenerator.createPdfFromImages(savedPagePaths, targetPdf)
+                } catch (e: Exception) {
+                    android.util.Log.e("QuickScanner", "PDF generation warning", e)
+                }
 
-            val title = "Scan ${SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()).format(Date())}"
-            val doc = ScanDocument(
-                title = title,
-                pagePaths = savedPagePaths,
-                pdfPath = pdfPath,
-                pageCount = savedPagePaths.size
-            )
+                val title = "Scan ${SimpleDateFormat("MMM dd, HH:mm", Locale.getDefault()).format(Date())}"
+                val doc = ScanDocument(
+                    title = title,
+                    pagePaths = savedPagePaths,
+                    pdfPath = if (targetPdf.exists()) targetPdf.absolutePath else null,
+                    pageCount = savedPagePaths.size
+                )
 
-            val docId = QuickScannerApp.database.scanDocumentDao().insertDocument(doc)
+                val docId = QuickScannerApp.database.scanDocumentDao().insertDocument(doc)
 
-            withContext(Dispatchers.Main) {
-                pendingNavigateToDocId?.invoke(docId)
+                withContext(Dispatchers.Main) {
+                    pendingNavigateToDocId?.invoke(docId)
+                }
+            } catch (e: Throwable) {
+                android.util.Log.e("QuickScanner", "Scan handling error", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, "Processing failed: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
 
     private fun copyUriToFile(uri: Uri, dest: File) {
+        dest.parentFile?.let { if (!it.exists()) it.mkdirs() }
         contentResolver.openInputStream(uri)?.use { input: InputStream ->
             FileOutputStream(dest).use { output ->
                 input.copyTo(output)
